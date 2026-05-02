@@ -25,7 +25,7 @@ import { startLabChat, suggestActionPlans, translateToRequest } from "./services
 
 const Navigation = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (t: string) => void }) => {
   const tabs = [
-    { id: "dashboard", icon: Home, label: "K365N" },
+    { id: "dashboard", icon: Home, label: "홈" },
     { id: "journal", icon: BookOpen, label: "저널" },
     { id: "lab", icon: MessageSquare, label: "AI 랩" },
     { id: "sun", icon: Sun, label: "태양" },
@@ -63,7 +63,7 @@ const Dashboard = ({ entries, sunRecords, streak, onStartJournal }: { entries: J
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <header className="space-y-3">
         <h1 className="text-4xl font-light text-brand-ink leading-tight">안녕하세요, <span className="text-brand-sun font-normal">회원</span>님</h1>
-        <p className="text-brand-olive/70 text-lg leading-relaxed">오늘 당신의 마음이라는 하늘은 <br/>어떤 구름에 가려져 있나요?</p>
+        <p className="text-brand-olive/70 text-lg leading-relaxed">스스로를 토닥이며<br/>마음의 언어를 배워가는 시간입니다.</p>
       </header>
 
       <div className="grid grid-cols-2 gap-4">
@@ -961,7 +961,7 @@ export default function App() {
           className="relative hover:scale-105 transition-transform group"
         >
           <span className="text-2xl font-black tracking-tighter bg-gradient-to-r from-brand-sun via-amber-400 to-brand-sun bg-[length:200%_auto] animate-[shimmer_3s_linear_infinite] bg-clip-text text-transparent">
-            K365N
+            todak
           </span>
           <span className="absolute -inset-1 bg-brand-sun/10 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
         </button>
