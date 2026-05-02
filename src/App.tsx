@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { JournalEntry, SunRecord, ThoughtPattern } from "./types";
-import { THOUGHT_PATTERNS, CORE_NEEDS, EMOTIONS, STABILIZATION_TECHNIQUES } from "./constants";
+import { THOUGHT_PATTERNS, CORE_NEEDS, EMOTIONS, STABILIZATION_TECHNIQUES, LIVE_COUPON_CODE } from "./constants";
 import { startLabChat, suggestActionPlans, translateToRequest } from "./services/geminiService";
 
 // --- Components ---
@@ -883,6 +883,10 @@ export default function App() {
   const [sunRecords, setSunRecords] = useState<SunRecord[]>([]);
   const [lastSavedEntry, setLastSavedEntry] = useState<JournalEntry | null>(null);
   const [streak, setStreak] = useState(0);
+  const [isPremium, setIsPremium] = useState(false);
+  const [showCouponModal, setShowCouponModal] = useState(false);
+  const [couponInput, setCouponInput] = useState("");
+  const [couponError, setCouponError] = useState(false);
 
   useEffect(() => {
     const savedEntries = localStorage.getItem("journalEntries");
@@ -891,7 +895,20 @@ export default function App() {
     if (savedEntries) setJournalEntries(JSON.parse(savedEntries));
     if (savedRecords) setSunRecords(JSON.parse(savedRecords));
     if (savedStreak) setStreak(JSON.parse(savedStreak).streak ?? 0);
+    if (localStorage.getItem("isPremium") === "true") setIsPremium(true);
   }, []);
+
+  const applyCoupon = () => {
+    if (couponInput.trim().toUpperCase() === LIVE_COUPON_CODE) {
+      localStorage.setItem("isPremium", "true");
+      setIsPremium(true);
+      setShowCouponModal(false);
+      setCouponInput("");
+      setCouponError(false);
+    } else {
+      setCouponError(true);
+    }
+  };
 
   const updateStreak = () => {
     const today = new Date().toDateString();
@@ -922,14 +939,28 @@ export default function App() {
   return (
     <div className="min-h-screen bg-brand-cream font-sans">
       <header className="sticky top-0 bg-brand-cream/80 backdrop-blur-lg z-30 pt-6 pb-2 px-6 flex justify-between items-center max-w-md mx-auto">
-        <button 
-          onClick={() => setActiveTab("dashboard")} 
+        <button
+          onClick={() => setActiveTab("dashboard")}
           className="text-2xl font-black text-brand-sun tracking-tighter hover:scale-105 transition-transform"
         >
           K365N
         </button>
-        <div className="w-8 h-8 rounded-full bg-brand-olive/5 flex items-center justify-center">
-          <Heart size={16} className="text-brand-sun/60" />
+        <div className="flex items-center gap-2">
+          {isPremium ? (
+            <span className="text-[10px] font-black tracking-widest uppercase bg-brand-sun text-white px-3 py-1 rounded-full">
+              LIVE
+            </span>
+          ) : (
+            <button
+              onClick={() => setShowCouponModal(true)}
+              className="text-[10px] font-bold text-brand-olive/40 hover:text-brand-sun transition-colors tracking-widest uppercase"
+            >
+              코드 입력
+            </button>
+          )}
+          <div className="w-8 h-8 rounded-full bg-brand-olive/5 flex items-center justify-center">
+            <Heart size={16} className={isPremium ? "text-brand-sun" : "text-brand-sun/60"} />
+          </div>
         </div>
       </header>
       <main className="max-w-md mx-auto px-6 pt-4 pb-32">
@@ -988,6 +1019,56 @@ export default function App() {
               >
                 확인했습니다
               </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showCouponModal && (
+          <div className="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-brand-ink/30 backdrop-blur-sm">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-brand-cream w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 space-y-6"
+            >
+              <div className="space-y-1 text-center">
+                <p className="text-[10px] font-bold text-brand-sun uppercase tracking-widest">라이브 참여자 전용</p>
+                <h3 className="text-2xl">코드를 입력하세요</h3>
+                <p className="text-sm text-brand-olive/50">라이브에서 공개된 코드를 입력하면<br/>모든 기능이 열립니다.</p>
+              </div>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={couponInput}
+                  onChange={(e) => { setCouponInput(e.target.value); setCouponError(false); }}
+                  onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
+                  placeholder="코드 입력"
+                  className={`w-full text-center text-xl font-black tracking-widest uppercase p-4 rounded-2xl border bg-white focus:outline-none transition-colors ${
+                    couponError ? "border-red-300 text-red-500" : "border-brand-olive/10 focus:border-brand-sun text-brand-ink"
+                  }`}
+                  autoFocus
+                />
+                {couponError && (
+                  <p className="text-center text-xs text-red-400">올바른 코드가 아닙니다.</p>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setShowCouponModal(false); setCouponInput(""); setCouponError(false); }}
+                  className="flex-1 py-3 rounded-2xl border border-brand-olive/10 text-brand-olive text-sm font-semibold hover:bg-brand-olive/5 transition-colors"
+                >
+                  닫기
+                </button>
+                <button
+                  onClick={applyCoupon}
+                  disabled={!couponInput}
+                  className="flex-[2] py-3 rounded-2xl bg-brand-sun text-white text-sm font-bold hover:opacity-90 transition-opacity disabled:opacity-30"
+                >
+                  확인
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

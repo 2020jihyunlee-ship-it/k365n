@@ -1,5 +1,7 @@
 import { ThoughtPattern } from "./types";
 
+export const LIVE_COUPON_CODE = "K365OPEN";
+
 export const THOUGHT_PATTERNS = [
   { id: ThoughtPattern.JUDGMENT, description: "나도 모르게 '옳고 그름'을 따지며 상대를 가두고 있나요?" },
   { id: ThoughtPattern.CRITICISM, description: "나 혹은 상대방에게 화살을 돌리며 탓하고 있지는 않나요?" },
