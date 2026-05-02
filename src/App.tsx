@@ -960,7 +960,7 @@ export default function App() {
           onClick={() => setActiveTab("dashboard")}
           className="hover:scale-105 transition-transform"
         >
-          <span className="text-2xl font-black tracking-tighter text-brand-sun">
+          <span className="text-2xl font-black tracking-tighter text-brand-sun animate-[glow_2.5s_ease-in-out_infinite]">
             맘결
           </span>
         </button>
